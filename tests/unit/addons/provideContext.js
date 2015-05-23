@@ -31,4 +31,30 @@ describe('provideContext', function () {
 
         React.renderToString(<WrappedComponent context={context} />);
     });
+
+    it('should provide the context with custom types to children using the decorator pattern', function () {
+        var context = {
+            foo: 'bar',
+            executeAction: function () {},
+            getStore: function () {}
+        };
+        @provideContext({
+            foo: React.PropTypes.string
+        })
+        class WrappedComponent extends React.Component {
+            static contextTypes = {
+                foo: React.PropTypes.string.isRequired,
+                executeAction: React.PropTypes.func.isRequired,
+                getStore: React.PropTypes.func.isRequired
+            }
+            render() {
+                expect(this.context.foo).to.equal(context.foo);
+                expect(this.context.executeAction).to.equal(context.executeAction);
+                expect(this.context.getStore).to.equal(context.getStore);
+                return null;
+            }
+        }
+
+        React.renderToString(<WrappedComponent context={context} />);
+    });
 });
